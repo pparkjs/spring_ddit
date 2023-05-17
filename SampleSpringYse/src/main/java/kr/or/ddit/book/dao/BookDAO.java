@@ -1,5 +1,6 @@
 package kr.or.ddit.book.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -40,5 +41,30 @@ public class BookDAO {
 		 * 우리가 작성한 쿼리는 조건이 pk이고, pk는 무조건 행이 유일함을 보장하기 때문에 결과는 0개 아니면 1개이다.
 		 */
 		return sqlSessionTemplate.selectOne("Book.selectBook", map);
+	}
+
+	public int updateBook(Map<String, Object> map) {
+		/*
+		 * sqlSessionTemplate 객체의 updateBook메소드는 insert 메소드와 사용법이 동일하다.
+		 * 첫번째 파라미터의 쿼리 ID, 두번쨰 파라미터는 쿼리 파라미터이고 반환값은 영향받은 행 수이다.
+		 */
+		return sqlSessionTemplate.update("Book.updateBook", map);
+	}
+
+	public int removeBook(Map<String, Object> map) {
+		/*
+		 * sqlSessionTemplate 객체의 deleteBook메소드는 update 메소드와 사용법이 동일하다.
+		 * 첫번째 파라미터의 쿼리 ID, 두번쨰 파라미터는 쿼리 파라미터이고 반환값은 영향받은 행 수이다.
+		 */
+		return sqlSessionTemplate.delete("Book.removeBook", map);
+	}
+
+	public List<Map<String, Object>> selectBookList(Map<String, Object> map) {
+		/*
+		 * 쿼리 결과를 목록으로 받기 위해서는 sqlSessionTemplate.selectList를 사용할 수 있다.
+		 * 첫번째 파라미터는 쿼리 ID, 두번째 파라미터는 쿼리 파라미터이다.
+		 * 리턴타입을 List타입으로 설정한 건, selectList 메소드의 결과가 집합 목록을 반환하기 때문이다
+		 */
+		return sqlSessionTemplate.selectList("Book.selectBookList", map);
 	}
 }
