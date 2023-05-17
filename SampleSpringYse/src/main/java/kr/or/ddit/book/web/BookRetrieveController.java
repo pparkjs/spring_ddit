@@ -1,10 +1,12 @@
 package kr.or.ddit.book.web;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +31,22 @@ public class BookRetrieveController {
 		String bookId = map.get("bookId").toString();
 		mav.addObject("bookId", bookId);
 		mav.setViewName("book/detail");
+		return mav;
+	}
+	
+	@RequestMapping(value="/list.do", method = RequestMethod.GET)
+	public ModelAndView list(@RequestParam Map<String, Object> map) {
+		List<Map<String, Object>> list = bookService.selectBookList(map);
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("list", list);
+		
+		// 검색 기능 추가
+		// 목록 페이지에서는 keyword가 HTTP 파라미터가 있을 수도 있고, 없을 수도 있다.
+		if(map.containsKey("keyword")) {
+			mav.addObject("keyword", map.get("keyword"));
+		}
+		mav.setViewName("book/list");
 		return mav;
 	}
 }
