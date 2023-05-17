@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +8,7 @@
 <title>Insert title here</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/bootstrap.min.css" />
 </head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <body>
 	<div class="jumbotron">
 		<div class="container">
@@ -41,7 +43,7 @@
 						<label for="title" class="col-form-label">가격</label>
 					</div>
 					<div class="col-md-10">
-						${book.PRICE }
+						<fmt:formatNumber type="number" maxFractionDigits="3" value="${book.PRICE }"/>
 					</div>
 				</div>
 			</div>
@@ -51,15 +53,32 @@
 						<label for="title" class="col-form-label">입력일</label>
 					</div>
 					<div class="col-md-10">
-						${book.INSERT_DATE }
+						<fmt:formatDate value="${book.INSERT_DATE }" pattern="yyyy.MM.dd HH:mm:ss"/> 
 					</div>
 				</div>
 			</div>
-			<a href="/book/update.do?${bookId }" class="btn btn-info">수정</a>
-			<a href="" id="delBtn" class="btn btn-danger">삭제</a>
+			<a href="/book/update.do?bookId=${bookId }" class="btn btn-info">수정</a>
 			<a href="/book/list.do" class="btn btn-primary">목록</a>
+			<form action="/book/delete.do" method="post" id="delForm">
+				<input type="hidden" name="bookId" value="${bookId }">
+				<input type="button" id="delBtn" class="btn btn-danger" value="삭제">
+			</form>
 		</div>
 		<hr>
 	</div>
 </body>
+<script>
+$(function(){
+	var delBtn = $("#delBtn");
+	var deForm = $("#delForm");
+	
+	delBtn.on("click", function(){
+		if(confirm("정말로 삭제하시겠습니까?")){
+			delForm.submit();
+		}else{
+			delForm.reset();
+		}
+	})
+})
+</script>
 </html>
