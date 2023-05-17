@@ -1,10 +1,12 @@
 package kr.or.ddit.book.service;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
 
 import kr.or.ddit.book.dao.BookDAO;
 import kr.or.ddit.book.service.BookService;
@@ -61,5 +63,46 @@ public class BookServiceImpl implements BookService {
 		// 서비스 내 detail함수는 dao를 호출한 결과를 바로 리턴하는 일만 한다.
 		return bookDao.selectBook(map);
 	}
+
+	/**
+	 * <p>책 수정</p>
+	 * @since SampleSpringYse 1.0
+	 * @author 박정수
+	 * @param map 책 ID
+	 * @return 성공 1, 실패 0
+	 */
+	@Override
+	public boolean updateBook(Map<String, Object> map) {
+		int affectRowCount = bookDao.updateBook(map);
+		return affectRowCount == 1;
+	}
+
+	/**
+	 * <p>책 삭제</p>
+	 * @since SampleSpringYse 1.0
+	 * @author 박정수
+	 * @param map 책 ID
+	 * @return 성공 1, 실패 0
+	 */
+	@Override
+	public boolean removeBook(Map<String, Object> map) {
+		int affectRowCount = bookDao.removeBook(map);
+		return affectRowCount == 1;
+	}
+	
+	/**
+	 * <p>책 목록</p>
+	 * @since SampleSpringYse 1.0
+	 * @author 박정수
+	 * @param map 책 키워드
+	 * @return 성공 리스트(책들), 실패 null
+	 */
+	@Override
+	public List<Map<String, Object>> selectBookList(Map<String, Object> map) {
+		return bookDao.selectBookList(map);
+	}
+
+	
+	
 
 }
