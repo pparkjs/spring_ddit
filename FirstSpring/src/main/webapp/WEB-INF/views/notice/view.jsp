@@ -8,37 +8,73 @@
 <body>
 	<div class="jumbotron">
 		<div class="container">
-			<h3 class="display-3">공지게시판 상세보기 / 수정 / 삭제</h3>
+			<h3 class="display-3">공지게시판 상세보기</h3>
 		</div>
 	</div>
 
 	<div class="container">
-		<form name="newUpdate" action="" class="form-horizontal" method="post">
-0			<div class="form-group row">
+		<form name="newUpdate" id="nForm" action="/notice/update.do" class="form-horizontal" method="get">
+			<input type="hidden" name="boNo" value="${notice.boNo }">
+			<div class="form-group row">
 				<label class="col-sm-2 control-label" >제목</label>
 				<div class="col-sm-5">
-					<input name="subject" class="form-control"	value="" >
+					<h3 class="card-title">${notice.boTitle }</h3>
+					<div class="card-tools">${noticed.boWriter } ${notice.boDate } ${notice.boHit }</div>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 control-label" >내용</label>
 				<div class="col-sm-8" style="word-break: break-all;">
-					<textarea name="content" class="form-control" cols="50" rows="5"></textarea>
+					<div class="card-body">${notice.boContent }</div>
 				</div>
 			</div>
 			<div class="form-group row">
 				<div class="col-sm-offset-2 col-sm-10 ">
 					<p>
-						<a	href=""	class="btn btn-danger"> 삭제</a> 
-						<input type="submit" class="btn btn-success" value="수정 ">
-						<a href="" class="btn btn-primary"> 목록</a>
+						<button type="button" class="btn btn-info" id="updateBtn">수정</button>
+						<button type="button" class="btn btn-danger" id="delBtn">삭제</button>
+						<a href="/notice/list.do" class="btn btn-primary"> 목록</a>
 					</p>
 				</div>
 			</div>
 		</form>
 		<hr>
 	</div>
+	<script src="${pageContext.request.contextPath}/resources/plugins/jquery/jquery.min.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>
 </body>
+<script>
+$(function(){
+	var updateBtn = $("#updateBtn");
+	var delBtn = $("#delBtn");
+	var nForm = $("#nForm")
+	
+	updateBtn.on("click", function(){
+		// 수정처리(페이지로 이동합니다.)
+		nForm.submit();
+	});
+	
+	delBtn.on("click", function(){
+		// 삭제 처리
+		if(confirm("정말 삭제하시겠습니까?")){
+			// 삭제처리
+			nForm.attr("method", "get");
+			nForm.attr("action", "/notice/delete.do");
+			nForm.submit();
+		}else{
+			// 삭제 취소
+			nForm.reset();
+		}
+	});
+
+	if(${empty notice}){
+		alert("삭제된 게시글 입니다.")
+		location.href = "/notice/list.do"
+	}
+	
+})
+</script>
 </html>
 
 
