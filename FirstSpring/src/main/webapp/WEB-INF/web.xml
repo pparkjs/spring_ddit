@@ -49,4 +49,16 @@
       <filter-name>encodingFilter</filter-name>
       <url-pattern>/*</url-pattern>
    </filter-mapping>
+   
+   <filter>
+	  <filter-name>searchFilter</filter-name>   
+	  <filter-class>kr.or.ddit.notice.SearchFilter</filter-class>
+   </filter>
+   <filter-mapping>
+	  <filter-name>searchFilter</filter-name>   
+	  <url-pattern>/free/list.do</url-pattern>
+	  <url-pattern>/notice/list.do</url-pattern>
+	  <url-pattern>/board/list.do</url-pattern>
+   </filter-mapping>
+   
 </web-app>
