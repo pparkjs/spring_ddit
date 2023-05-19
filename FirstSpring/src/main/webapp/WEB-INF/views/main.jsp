@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <html>
 <head>
 <link href="${pageContext.request.contextPath }/resources/css/bootstrap.min.css" rel="stylesheet">
@@ -52,14 +53,14 @@
 							</a>
 						</li>
 						<li>
-							<a href="#" class="nav-link text-white"> 
+							<a href="/notice/list.do" class="nav-link text-white"> 
 								<svg class="bi d-block mx-auto mb-1" width="24" height="24">
 									<use xlink:href="#grid" />
 								</svg> 공지사항게시판
 							</a>
 						</li>
 						<li>
-							<a href="#" class="nav-link text-white"> 
+							<a href="/free/list.do" class="nav-link text-white"> 
 								<svg class="bi d-block mx-auto mb-1" width="24" height="24">
 									<use xlink:href="#grid" />
 								</svg> 자유게시판
@@ -90,7 +91,7 @@
 				<form action="" method="post">
 					<div>
 						<div class="text-right">
-							<span class="badge badge-success">전체 0 건</span>
+							<span>전체 ${bCnt} 건 이상</span>
 						</div>
 					</div>
 					<div style="padding-top: 50px">
@@ -100,13 +101,26 @@
 								<th>제목</th>
 								<th>작성일</th>
 							</tr>
-							<tr>
-								<td colspan="3">조회하신 게시글이 존재하지 않습니다.</td>
-							</tr>
+							<c:choose>
+								<c:when test="${empty boardList }">
+									<tr>
+										<td colspan="3">조회하신 게시글이 존재하지 않습니다.</td>
+									</tr>
+								</c:when>
+								<c:otherwise>
+									<c:forEach items="${boardList }" var="board">
+										<tr class="bViewBtn" id="${board.boNo }">
+											<td>${board.boNo }</td>										
+											<td>${board.boTitle }</td>										
+											<td>${board.boDate }</td>										
+										</tr>
+									</c:forEach>
+								</c:otherwise>
+							</c:choose>
 						</table>
 					</div>
 				</form>
-				<a href="#" onclick="" class="btn btn-outline-primary">&laquo;더보기</a>
+				<a href="/board/list.do" onclick="" class="btn btn-outline-primary">&laquo;더보기</a>
 			</div>
 			<div class="col-md-6">
 				<div align="left">
@@ -115,7 +129,7 @@
 				<form action="" method="post">
 					<div>
 						<div class="text-right">
-							<span class="badge badge-success">전체 0건</span>
+							<span>전체 ${nCnt} 건 이상</span>
 						</div>
 					</div>
 					<div style="padding-top: 50px">
@@ -125,13 +139,26 @@
 								<th>제목</th>
 								<th>작성일</th>
 							</tr>
-							<tr>
-								<td colspan="3">조회하신 게시글이 존재하지 않습니다.</td>
-							</tr>
+							<c:choose>
+								<c:when test="${empty noticeList }">
+									<tr>
+										<td colspan="3">조회하신 게시글이 존재하지 않습니다.</td>
+									</tr>
+								</c:when>
+								<c:otherwise>
+									<c:forEach items="${noticeList }" var="notice">
+										<tr class="nViewBtn" id="${notice.boNo }">
+											<td>${notice.boNo }</td>										
+											<td>${notice.boTitle }</td>										
+											<td>${notice.boDate }</td>										
+										</tr>
+									</c:forEach>
+								</c:otherwise>
+							</c:choose>
 						</table>
 					</div>
 				</form>
-				<a href="#" onclick="" class="btn btn-outline-primary">&laquo;더보기</a>
+				<a href="/notice/list.do" onclick="" class="btn btn-outline-primary">&laquo;더보기</a>
 			</div>
 		</div>
 		<br/>
@@ -143,7 +170,7 @@
 				<form action="" method="post">
 					<div>
 						<div class="text-right">
-							<span class="badge badge-success">전체 0건</span>
+							<span>전체 ${fCnt} 건 이상</span>
 						</div>
 					</div>
 					<div style="padding-top: 50px">
@@ -153,18 +180,53 @@
 								<th>제목</th>
 								<th>작성일</th>
 							</tr>
-							<tr>
-								<td colspan="3">조회하신 게시글이 존재하지 않습니다.</td>
-							</tr>
+							<c:choose>
+								<c:when test="${empty freeList }">
+									<tr>
+										<td colspan="3">조회하신 게시글이 존재하지 않습니다.</td>
+									</tr>
+								</c:when>
+								<c:otherwise>
+									<c:forEach items="${freeList }" var="free">
+										<tr class="fViewBtn" id="${free.boNo }">
+											<td>${free.boNo }</td>										
+											<td>${free.boTitle }</td>										
+											<td>${free.boDate }</td>										
+										</tr>
+									</c:forEach>
+								</c:otherwise>
+							</c:choose>
 						</table>
 					</div>
 				</form>
-				<a href="#" onclick="" class="btn btn-outline-primary">&laquo;더보기</a>
+				<a href="/free/list.do" onclick="" class="btn btn-outline-primary">&laquo;더보기</a>
 			</div>
 			<div class="col-md-6"></div>
 		</div>
 		<br/>
 	</div>
 </main>
+	<script src="${pageContext.request.contextPath}/resources/plugins/jquery/jquery.min.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>
 </body>
+<script>
+$(function(){
+	
+	$(".bViewBtn").on("click", function(){
+		var boNo = $(this).attr("id")
+		location.href = "/board/detail.do?boNo=" + boNo;
+	})
+	
+	$(".nViewBtn").on("click", function(){
+		var boNo = $(this).attr("id")
+		location.href = "/notice/detail.do?boNo=" + boNo;
+	})
+	
+	$(".fViewBtn").on("click", function(){
+		var boNo = $(this).attr("id")
+		location.href = "/free/detail.do?boNo=" + boNo;
+	})
+})
+</script>
 </html>
