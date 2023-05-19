@@ -1,16 +1,21 @@
 <%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"  %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>일반게시판 상세보기</title>
+<title>일반게시판 등록/수정</title>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/fontawesome-free/css/all.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
+	<c:set value="등록" var="name"/>
+	<c:if test="${status eq 'u' }">
+		<c:set value="수정" var="name"/>
+	</c:if>
 	<div class="wrapper">
 		<nav
 			class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -86,12 +91,12 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1>일반게시판 등록</h1>
+							<h1>일반게시판 ${name }</h1>
 						</div>
 						<div class="col-sm-6">
 							<ol class="breadcrumb float-sm-right">
 								<li class="breadcrumb-item"><a href="#">DDIT HOME</a></li>
-								<li class="breadcrumb-item active">일반게시판 등록</li>
+								<li class="breadcrumb-item active">일반게시판 ${name }</li>
 							</ol>
 						</div>
 					</div>
@@ -102,32 +107,52 @@
 				<div class="row">
 					<div class="col-md-12">
 						<form class="card card-primary" method="post" action="/board/insert.do" id="boardForm">
+							<c:if test="${status eq 'u' }">
+								<input type="hidden" name="boNo" value="${board.boNo }"/>
+							</c:if>
 							<div class="card-header">
-								<h3 class="card-title">일반게시판 등록</h3>
+								<h3 class="card-title">일반게시판 ${name }</h3>
 								<div class="card-tools"></div>
 							</div>
 							<div class="card-body">
 								<div class="form-group">
 									<label for="inputName">제목을 입력해주세요</label> 
-									<input type="text" id="boTitle" class="form-control" name="boTitle" placeholder="제목을 입력해주세요">
+									<input type="text" id="boTitle" class="form-control" name="boTitle" value="${board.boTitle }" placeholder="제목을 입력해주세요">
 								</div>
 								<div class="form-group">
 									<label for="inputDescription">내용을 입력해주세요</label>
-									<textarea id="boContent" class="form-control" rows="14" name="boContent"></textarea>
+									<textarea id="boContent" class="form-control" rows="14" name="boContent">${board.boContent }</textarea>
 								</div>
 								<div class="row">
 									<div class="col-12">
-										<a href="">
-											<input type="button" value="목록" class="btn btn-success float-right">
-										</a>
-										<input type="button" value="등록" id="formBtn" class="btn btn-primary float-right">
-										<a href="">
-											<input type="button" value="취소" class="btn btn-danger float-right">
-										</a>
+										<!-- 
+											등록 시 버튼 그룹
+											> 목록 등록
+											수정 시 버튼 그룹
+											> 수정 취소
+										 -->
+										<input type="button" value="${name }" id="formBtn" class="btn btn-primary float-right">
+										<c:if test="${status eq 'u' }">
+											<a href="/board/detail.do?boNo=${board.boNo }">
+												<input type="button" value="취소" class="btn btn-danger float-right">
+											</a>
+										</c:if>
+										<c:if test="${status ne 'u' }">
+											<a href="/board/list.do">
+												<input type="button" value="목록" class="btn btn-success float-right">
+											</a>
+										</c:if>
+										
 									</div>
 								</div>
 							</div>
-						</form>
+						<c:if test="${not empty errors }">
+							<p>
+								${errors.boTitle }<br/>
+								${errors.boContent }<br/>
+								${errors.msg }
+							</p>
+						</c:if>
 					</div>
 				</div>
 			</section>
@@ -147,5 +172,61 @@
 	<script src="${pageContext.request.contextPath}/resources/plugins/jquery/jquery.min.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/ckeditor/ckeditor.js"></script>
 </body>
+<script type="text/javascript">
+$(function(){
+	CKEDITOR.replace("boContent");
+	CKEDITOR.config.allowedContent = true; // html태그가 사라지는걸 방지
+	
+	var formBtn = $("#formBtn");
+	
+	formBtn.on("click", function(){
+		var title = $("#boTitle").val(); // 제목 데이터 얻어오기
+// 		var content = $("boContent").val(); // 내용 데이터 얻어오기를 이렇게 얻어오면 안됨
+		var content = CKEDITOR.instances.boContent.getData();  //내용 데이터 얻어오기
+		
+		// 제목을 입력하지 않았을 때에 대한 필터
+		if(title == ""){
+			alert("제목을 입력해주세요!");
+			$("#boTitle").focus();
+			return false;
+		}
+		
+		// 내용을 입력하지 않았을 때에 대한 필터
+		if(content == ""){
+			alert("내용을 입력해주세요!")
+			$("#boContent").focus();
+			return false;
+		}
+		
+        if (title.length > 132) {
+            alert("제목 입력 제한 길이를 초과했습니다. 다시 입력해 주세요.");
+            $("#boTitle").focus();
+            return false;
+        }
+        
+        if (content.length > 1300) {
+            alert("내용 입력 제한 길이를 초과했습니다. 다시 입력해 주세요.");
+            $("#boContent").focus();
+            return false;
+        }
+		
+		// 등록 일때와 수정 일때를 구분해서 방향만 살짝 틀어주면 등록이되고 수정이된다.
+		if($(this).val() == "수정"){
+			$("#boardForm").attr("action", "/board/update.do"); // 수정을 하러 가기 위해 url경로를 틀어준다.
+		}
+		
+		// 제목, 내용을 누락하지 않았을 경우, 최종 submit 이벤트가 발생한다.
+		$("#boardForm").submit();
+	});
+	
+	if('${status}' == 'u'){
+		if(${empty board}){
+			alert("삭제된 게시글 입니다.")
+			location.href = "/board/list.do"
+		}
+	}
+});
+</script>
 </html>

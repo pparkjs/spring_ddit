@@ -103,10 +103,10 @@
 						<div class="col-md-12">
 							<div class="card card-primary">
 								<div class="card-header">
-									<h3 class="card-title">제목</h3>
-									<div class="card-tools">작성자 작성일 조회수</div>
+									<h3 class="card-title">${board.boTitle }</h3>
+									<div class="card-tools">${board.boWriter } ${board.boDate } ${board.boHit }</div>
 								</div>
-								<div class="card-body">내용</div>
+								<div class="card-body">${board.boContent }</div>
 								<div class="card-footer">
 									<button type="button" class="btn btn-primary" id="listBtn">목록</button>
 									<button type="button" class="btn btn-info" id="updateBtn">수정</button>
@@ -114,6 +114,9 @@
 								</div>
 							</div>
 						</div>
+						<form action="/board/update.do" method="get" id="nFrm">
+							<input type="hidden" name="boNo" value="${board.boNo }">
+						</form>
 						<div class="col-md-6"></div>
 					</div>
 				</div>
@@ -135,4 +138,40 @@
 	<script src="${pageContext.request.contextPath}/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/dist/js/adminlte.min.js"></script>
 </body>
+<script type="text/javascript">
+$(function(){
+	var listBtn = $("#listBtn");
+	var updateBtn = $("#updateBtn");
+	var delBtn = $("#delBtn");
+	var nFrm = $("#nFrm");
+	
+	listBtn.on("click", function(){
+		location.href = "/board/list.do";
+	});
+	
+	updateBtn.on("click", function(){
+		// 수정처리(페이지로 이동합니다.)
+		nFrm.submit();
+	});
+	
+	delBtn.on("click", function(){
+		// 삭제 처리
+		if(confirm("정말 삭제하시겠습니까?")){
+			// 삭제처리
+			nFrm.attr("method", "get");
+			nFrm.attr("action", "/board/delete.do");
+			nFrm.submit();
+		}else{
+			// 삭제 취소
+			nFrm.reset();
+		}
+	});
+	
+	if(${empty board}){
+		alert("삭제된 게시글 입니다.")
+		location.href = "/board/list.do"
+	}
+	
+})
+</script>
 </html>
